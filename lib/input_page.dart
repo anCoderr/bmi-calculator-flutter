@@ -1,3 +1,5 @@
+import 'package:bmi_calculator/bmi_calculator_brain.dart';
+import 'package:bmi_calculator/output_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,9 +23,9 @@ class _InputPageState extends State<InputPage> {
   Color femaleCardColor = kInactiveCardColor;
   GenderType selectedGender;
 
-  int currentSliderValue = 175;
-  int currentWeightValue = 60;
-  int currentAgeValue = 30;
+  int heightOfUser = 175;
+  int weightOfUser = 60;
+  int ageOfUser = 30;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +85,7 @@ class _InputPageState extends State<InputPage> {
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       children: <Widget>[
                         Text(
-                          currentSliderValue.toInt().toString(),
+                          heightOfUser.toInt().toString(),
                           style: kDataTextStyle,
                         ),
                         Text(
@@ -103,13 +105,13 @@ class _InputPageState extends State<InputPage> {
                           overlayShape:
                               RoundSliderOverlayShape(overlayRadius: 25.0)),
                       child: Slider(
-                        value: currentSliderValue.toDouble(),
+                        value: heightOfUser.toDouble(),
                         max: 250,
                         min: 100,
                         divisions: 150,
                         onChanged: (double newValue) {
                           setState(() {
-                            currentSliderValue = newValue.toInt();
+                            heightOfUser = newValue.toInt();
                           });
                         },
                       ),
@@ -138,7 +140,7 @@ class _InputPageState extends State<InputPage> {
                             crossAxisAlignment: CrossAxisAlignment.baseline,
                             children: <Widget>[
                               Text(
-                                currentWeightValue.toString(),
+                                weightOfUser.toString(),
                                 style: kDataTextStyle,
                               ),
                               Text(
@@ -154,8 +156,7 @@ class _InputPageState extends State<InputPage> {
                                 displayIcon: FontAwesomeIcons.minus,
                                 onPressed: () {
                                   setState(() {
-                                    currentWeightValue =
-                                        subtractor(currentWeightValue);
+                                    weightOfUser = subtractor(weightOfUser);
                                   });
                                 },
                               ),
@@ -166,8 +167,7 @@ class _InputPageState extends State<InputPage> {
                                 displayIcon: FontAwesomeIcons.plus,
                                 onPressed: () {
                                   setState(() {
-                                    currentWeightValue =
-                                        adder(currentWeightValue);
+                                    weightOfUser = adder(weightOfUser);
                                   });
                                 },
                               ),
@@ -193,7 +193,7 @@ class _InputPageState extends State<InputPage> {
                             crossAxisAlignment: CrossAxisAlignment.baseline,
                             children: <Widget>[
                               Text(
-                                currentAgeValue.toString(),
+                                ageOfUser.toString(),
                                 style: kDataTextStyle,
                               ),
                               Text(
@@ -209,8 +209,7 @@ class _InputPageState extends State<InputPage> {
                                 displayIcon: FontAwesomeIcons.minus,
                                 onPressed: () {
                                   setState(() {
-                                    currentAgeValue =
-                                        subtractor(currentAgeValue);
+                                    ageOfUser = subtractor(ageOfUser);
                                   });
                                 },
                               ),
@@ -221,7 +220,7 @@ class _InputPageState extends State<InputPage> {
                                 displayIcon: FontAwesomeIcons.plus,
                                 onPressed: () {
                                   setState(() {
-                                    currentAgeValue = adder(currentAgeValue);
+                                    ageOfUser = adder(ageOfUser);
                                   });
                                 },
                               ),
@@ -236,12 +235,35 @@ class _InputPageState extends State<InputPage> {
             ),
             Expanded(
               flex: 6,
-              child: Container(
-                color: kBottomContainerColor,
-                margin: EdgeInsets.only(top: 10.0),
-                width: double.infinity,
+              child: GestureDetector(
+                onTap: () {
+                  BmiCalculatorBrain brain = BmiCalculatorBrain(
+                      height: heightOfUser, weight: weightOfUser);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OutputPage(
+                                bmiResult: brain.getBmi(),
+                                resultText: brain.getResult(),
+                                interpretationText: brain.getInterpretation(),
+                              )));
+                },
+                child: Container(
+                  child: Center(
+                    child: Text(
+                      'CALCULATE',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  color: kBottomContainerColor,
+                  margin: EdgeInsets.only(top: 10.0),
+                  width: double.infinity,
+                ),
               ),
-            )
+            ),
           ],
         ));
   }
